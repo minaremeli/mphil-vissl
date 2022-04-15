@@ -32,8 +32,8 @@
         "val": ["<path_to_pytorch_dataset>", "<unused>"]
     },
     "CIFAR100": {
-        "train": ["<path_to_pytorch_dataset>", "<unused>"],
-        "val": ["<path_to_pytorch_dataset>", "<unused>"]
+        "train": ["data/CIFAR-100-dataset/train", "<unused>"],
+        "test": ["data/CIFAR-100-dataset/test", "<unused>"]
     },
     "STL10": {
         "train": ["<path_to_pytorch_dataset>", "<unused>"],
