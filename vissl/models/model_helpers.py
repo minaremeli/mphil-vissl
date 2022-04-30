@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules.utils import _ntuple
 from torch.utils.checkpoint import checkpoint
+from torchvision.models.resnet import Bottleneck, BasicBlock
 from vissl.data.collators.collator_helper import MultiDimensionalTensor
 from vissl.utils.activation_checkpointing import checkpoint_trunk
 from vissl.utils.env import get_machine_local_and_dist_rank
@@ -274,6 +275,11 @@ class RESNET_NORM_LAYER(str, Enum):
     GroupNorm = "GroupNorm"
 
 
+class RESNET_BLOCK(str, Enum):
+    Bottleneck = "Bottleneck"
+    BasicBlock = "BasicBlock"
+
+
 def _get_norm(trunk_config):
     """
     return the normalization layer to use in the model based on the layer name
@@ -290,6 +296,13 @@ def _get_norm(trunk_config):
         RESNET_NORM_LAYER.GroupNorm: group_norm,
     }[layer_name]
 
+
+def _get_block(trunk_config):
+    layer_name = trunk_config.BLOCK
+    return {
+        RESNET_BLOCK.BasicBlock: BasicBlock,
+        RESNET_BLOCK.Bottleneck: Bottleneck
+    }[layer_name]
 
 def parse_out_keys_arg(
     out_feat_keys: List[str], all_feat_names: List[str]

@@ -624,6 +624,11 @@ config:
         # for the pixel-wise task. Torchvision default is stride=2 and all other models
         # use this so we set the default as 2.
         LAYER4_STRIDE: 2
+        CONV1_KERNEL: 7 # kernel size of conv1
+        CONV1_STRIDE: 2 # stride of conv1
+        CONV1_PADDING: 3 # padding of conv1
+        MAXPOOL: True # max pooling after conv1
+        BLOCK: Bottleneck # Bottleneck | BasicBlock
 
       # ------------------------------------------------------------- #
       # EfficientNet params

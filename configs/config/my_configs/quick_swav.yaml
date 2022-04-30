@@ -50,7 +50,12 @@ config:
     TRUNK:
       NAME: resnet
       RESNETS:
-        DEPTH: 50
+        DEPTH: 18
+        CONV1_KERNEL: 3
+        CONV1_STRIDE: 1
+        CONV1_PADDING: 1
+        MAXPOOL: False
+        BLOCK: BasicBlock
     HEAD:
       PARAMS: [
         ["swav_head", {"dims": [2048, 2048, 128], "use_bn": True, "num_clusters": [3000]}],
@@ -107,7 +112,7 @@ config:
   MACHINE:
     DEVICE: gpu
   CHECKPOINT:
-    DIR: "./checkpoints"
+    DIR: "./checkpoints/quick_swav"
     AUTO_RESUME: True
     CHECKPOINT_FREQUENCY: 5
     OVERWRITE_EXISTING: true
