@@ -11,19 +11,21 @@ config:
       MONITOR_PERF_STATS: True
       PERF_STAT_FREQUENCY: 40
       ROLLING_BTIME_FREQ: 5
+  MONITORING:
+    MONITOR_ACTIVATION_STATISTICS: 1
   DATA:
-    NUM_DATALOADER_WORKERS: 5
+    NUM_DATALOADER_WORKERS: 4
     TRAIN:
       DATA_SOURCES: [disk_folder]
       DATASET_NAMES: [CIFAR100]
-      BATCHSIZE_PER_REPLICA: 16
+      BATCHSIZE_PER_REPLICA: 512
       LABEL_TYPE: sample_index    # just an implementation detail. Label isn't used
       TRANSFORMS:
         - name: ImgPilToMultiCrop
-          total_num_crops: 6
-          size_crops: [224, 96]
-          num_crops: [2, 4]
-          crop_scales: [[0.14, 1], [0.05, 0.14]]
+          total_num_crops: 2
+          size_crops: [32]
+          num_crops: [2]
+          crop_scales: [[0.08, 1]]
         - name: RandomHorizontalFlip
           p: 0.5
         - name: ImgPilColorDistortion
@@ -34,18 +36,16 @@ config:
           radius_max: 2.0
         - name: ToTensor
         - name: Normalize
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [0.5074, 0.4867, 0.4411]
+          std: [0.2011, 0.1987, 0.202]
       COLLATE_FUNCTION: multicrop_collator
       MMAP_MODE: True
       COPY_TO_LOCAL_DISK: False
       COPY_DESTINATION_DIR: /tmp/imagenet1k/
-      DATA_LIMIT: 250
+      DATA_LIMIT: 2500
       DROP_LAST: True
   TRAINER:
     TRAIN_STEP_NAME: standard_train_step
-  METERS:
-    name: ""
   MODEL:
     TRUNK:
       NAME: resnet
@@ -58,25 +58,21 @@ config:
         BLOCK: BasicBlock
     HEAD:
       PARAMS: [
-        ["swav_head", {"dims": [2048, 2048, 128], "use_bn": True, "num_clusters": [3000]}],
+        ["swav_head", {"dims": [512, 512, 128], "use_bn": True, "num_clusters": [30]}],
       ]
     TEMP_FROZEN_PARAMS_ITER_MAP: [
-      ['module.heads.0.prototypes0.weight', 313],
-      # TODO (Min): FSDP need to return the original param name from named_parameters().
-      ['_fsdp_wrapped_module.heads.0._fsdp_wrapped_module._fpw_module.prototypes0._fsdp_wrapped_module.weight', 313]
+      ['module.heads.0.prototypes0.weight', 5],
     ]
-    SYNC_BN_CONFIG:
-      CONVERT_BN_TO_SYNC_BN: True
-      SYNC_BN_TYPE: pytorch
   LOSS:
     name: swav_loss
     swav_loss:
-      temperature: 0.1
+      temperature: 0.5
       use_double_precision: False
       normalize_last_layer: True
       num_iters: 3
       epsilon: 0.05
       crops_for_assign: [0, 1]
+      temp_hard_assignment_iters: 1 # for logging the loss
       queue:
         queue_length: 0
         start_iter: 0
@@ -86,23 +82,15 @@ config:
       larc_config:
         clip: False
         trust_coefficient: 0.001
-        eps: 0.00000001
       weight_decay: 0.000001
       momentum: 0.9
       nesterov: False
       num_epochs: 1
-      regularize_bn: True
-      regularize_bias: True
       param_schedulers:
         lr:
-          auto_lr_scaling:
-            auto_scale: true
-            base_value: 0.3
-            base_lr_batch_size: 256
-          name: cosine
-          start_value: 0.15   # LR for batch size 256
-          end_value: 0.0000
-          update_interval: step
+          name: "cosine"
+          start_value: 0.06
+          end_value: 0.0006
   DISTRIBUTED:
     BACKEND: nccl
     NUM_NODES: 1
@@ -114,5 +102,5 @@ config:
   CHECKPOINT:
     DIR: "./checkpoints/quick_swav"
     AUTO_RESUME: True
-    CHECKPOINT_FREQUENCY: 5
-    OVERWRITE_EXISTING: true
+    CHECKPOINT_FREQUENCY: 1
+    OVERWRITE_EXISTING: False
