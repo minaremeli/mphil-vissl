@@ -1,0 +1,99 @@
+# @package _global_
+config:
+  VERBOSE: False
+  LOG_FREQUENCY: 2
+  TEST_ONLY: False
+  TEST_MODEL: False
+  SEED_VALUE: 1
+  MULTI_PROCESSING_METHOD: forkserver
+  DATA:
+    NUM_DATALOADER_WORKERS: 4
+    TRAIN:
+      DATA_SOURCES: [disk_folder]
+      DATASET_NAMES: [CIFAR100]
+      BATCHSIZE_PER_REPLICA: 512
+      LABEL_TYPE: sample_index    # just an implementation detail. Label isn't used
+      TRANSFORMS:
+        - name: ImgPilToMultiCrop
+          total_num_crops: 2
+          size_crops: [32]
+          num_crops: [2]
+          crop_scales: [[0.08, 1]]
+        - name: RandomHorizontalFlip
+          p: 0.5
+        - name: ImgPilColorDistortion
+          strength: 1.0
+        - name: ImgPilGaussianBlur
+          p: 0.5
+          radius_min: 0.1
+          radius_max: 2.0
+        - name: ToTensor
+        - name: Normalize
+          mean: [0.5074, 0.4867, 0.4411]
+          std: [0.2011, 0.1987, 0.202]
+      COLLATE_FUNCTION: multicrop_collator
+      MMAP_MODE: True
+      COPY_TO_LOCAL_DISK: False
+      COPY_DESTINATION_DIR: /tmp/imagenet1k/
+      DATA_LIMIT: -1
+      DROP_LAST: True
+  TRAINER:
+    TRAIN_STEP_NAME: standard_train_step
+  MODEL:
+    TRUNK:
+      NAME: resnet
+      RESNETS:
+        DEPTH: 18
+        CONV1_KERNEL: 3
+        CONV1_STRIDE: 1
+        CONV1_PADDING: 1
+        MAXPOOL: False
+        BLOCK: BasicBlock
+    HEAD:
+      PARAMS: [
+        ["swav_head", {"dims": [512, 512, 128], "use_bn": True, "num_clusters": [30]}],
+      ]
+    TEMP_FROZEN_PARAMS_ITER_MAP: [
+      ['module.heads.0.prototypes0.weight', 900],
+    ]
+  LOSS:
+    name: swav_loss
+    swav_loss:
+      temperature: 0.5
+      use_double_precision: False
+      normalize_last_layer: True
+      num_iters: 3
+      epsilon: 0.05
+      crops_for_assign: [0, 1]
+      temp_hard_assignment_iters: 100 # for logging the loss
+      queue:
+        queue_length: 0
+        start_iter: 0
+  OPTIMIZER:
+      name: sgd
+      use_larc: True
+      larc_config:
+        clip: False
+        trust_coefficient: 0.001
+      weight_decay: 0.000001
+      momentum: 0.9
+      nesterov: False
+      num_epochs: 500
+      param_schedulers:
+        lr:
+          name: "cosine"
+          start_value: 0.06
+          end_value: 0.0006
+  DISTRIBUTED:
+    BACKEND: nccl
+    NUM_NODES: 1
+    NUM_PROC_PER_NODE: 1
+    INIT_METHOD: tcp
+    RUN_ID: auto
+  MACHINE:
+    DEVICE: gpu
+  CHECKPOINT:
+    DIR: "./checkpoints/trained_swav/1"
+    AUTO_RESUME: True
+    CHECKPOINT_FREQUENCY: 10
+    OVERWRITE_EXISTING: False
