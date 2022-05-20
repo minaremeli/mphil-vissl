@@ -1,0 +1,89 @@
+# @package _global_
+config:
+  VERBOSE: True
+  LOG_FREQUENCY: 200
+  TEST_ONLY: False
+  TEST_EVERY_NUM_EPOCH: 1
+  TEST_MODEL: True
+  SEED_VALUE: 0
+  MULTI_PROCESSING_METHOD: forkserver
+  HOOKS:
+    PERF_STATS:
+      MONITOR_PERF_STATS: True
+  DATA:
+    NUM_DATALOADER_WORKERS: 4
+    TRAIN:
+      DATA_SOURCES: [disk_folder]
+      LABEL_SOURCES: [disk_folder]
+      DATASET_NAMES: [CIFAR100]
+      BATCHSIZE_PER_REPLICA: 512
+      TRANSFORMS:
+        - name: ToTensor
+        - name: Normalize
+          mean: [0.5074, 0.4867, 0.4411]
+          std: [0.2011, 0.1987, 0.202]
+      MMAP_MODE: True
+      COPY_TO_LOCAL_DISK: False
+      COPY_DESTINATION_DIR: /tmp/cifar100/
+    TEST:
+      DATA_SOURCES: [disk_folder]
+      LABEL_SOURCES: [disk_folder]
+      DATASET_NAMES: [CIFAR100]
+      BATCHSIZE_PER_REPLICA: 512
+      TRANSFORMS:
+        - name: ToTensor
+        - name: Normalize
+          mean: [0.5074, 0.4867, 0.4411]
+          std: [0.2011, 0.1987, 0.202]
+      MMAP_MODE: True
+      COPY_TO_LOCAL_DISK: False
+      COPY_DESTINATION_DIR: /tmp/cifar100/
+  METERS:
+    name: accuracy_list_meter
+    accuracy_list_meter:
+      num_meters: 1
+      topk_values: [1, 5]
+  TRAINER:
+    TRAIN_STEP_NAME: standard_train_step
+  MODEL:
+    FEATURE_EVAL_SETTINGS:
+      EVAL_MODE_ON: True
+      FREEZE_TRUNK_ONLY: True
+      SHOULD_FLATTEN_FEATS: False
+      LINEAR_EVAL_FEAT_POOL_OPS_MAP: [
+        ["flatten", ["Identity", []]],
+      ]
+    TRUNK:
+      NAME: resnet
+      RESNETS:
+        DEPTH: 18
+        CONV1_KERNEL: 3
+        CONV1_STRIDE: 1
+        CONV1_PADDING: 1
+        MAXPOOL: False
+        BLOCK: BasicBlock
+    HEAD:
+      PARAMS: [
+        ["eval_mlp", {"in_channels": 512, "dims": [512, 100]}],
+      ]
+    WEIGHTS_INIT:
+      PARAMS_FILE: "./checkpoints/trained_swav/2/model_final_checkpoint_phase499.torch"
+      STATE_DICT_KEY_NAME: classy_state_dict
+  LOSS:
+    name: cross_entropy_multiple_output_single_target
+    cross_entropy_multiple_output_single_target:
+      ignore_index: -1
+  OPTIMIZER:
+    num_epochs: 100
+  DISTRIBUTED:
+    BACKEND: nccl
+    NUM_NODES: 1
+    NUM_PROC_PER_NODE: 1
+    INIT_METHOD: tcp
+    RUN_ID: auto
+  MACHINE:
+    DEVICE: gpu
+  CHECKPOINT:
+    DIR: "./checkpoints/LP/2"
+    AUTO_RESUME: True
+    CHECKPOINT_FREQUENCY: 20

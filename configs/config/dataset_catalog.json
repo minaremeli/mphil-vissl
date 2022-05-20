@@ -32,8 +32,19 @@
         "val": ["<path_to_pytorch_dataset>", "<unused>"]
     },
     "CIFAR100": {
-        "train": ["data/CIFAR-100-dataset/train", "<unused>"],
-        "test": ["data/CIFAR-100-dataset/test", "<unused>"]
+        "train": ["data/CIFAR-100-dataset/train", "data/CIFAR-100-dataset/train"],
+        "val": ["data/CIFAR-100-dataset/test", "data/CIFAR-100-dataset/test"]
+    },
+  "CIFAR100-downstream": {
+        "train": ["data/CIFAR-100-downstream/train", "data/CIFAR-100-downstream/train"],
+        "val": ["data/CIFAR-100-downstream/test", "data/CIFAR-100-downstream/test"]
+    },
+  "CIFAR100-upstream": {
+        "train": ["data/CIFAR-100-upstream/train", "data/CIFAR-100-upstream/train"],
+        "val": ["data/CIFAR-100-upstream/test", "data/CIFAR-100-upstream/test"]
+    },
+  "CIFAR100-poisoned": {
+        "train": ["data/CIFAR-100-poisoned/train", "data/CIFAR-100-poisoned/train"]
     },
     "STL10": {
         "train": ["<path_to_pytorch_dataset>", "<unused>"],

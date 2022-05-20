@@ -1,0 +1,12 @@
+# @package _global_
+config:
+  OPTIMIZER:
+      name: sgd
+      weight_decay: 0.000001
+      momentum: 0.9
+      nesterov: False
+      param_schedulers:
+        lr:
+          name: "cosine"
+          start_value: 0.03
+          end_value: 0.0
