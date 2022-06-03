@@ -1,0 +1,13 @@
+{"Rank": 0, "ep": 0, "iter": 0, "lr": 0.06, "loss": 3.39912, "btime(ms)": 0, "eta": "0:00:00", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 1, "lr": 0.06, "loss": 3.40883, "btime(ms)": 89635, "eta": "50 days, 7:33:50", "peak_mem(M)": 10129, "max_iterations": 48500}
+{"Rank": 0, "ep": 0, "iter": 2, "lr": 0.06, "loss": 3.41434, "btime(ms)": 44945, "eta": "25 days, 5:29:13", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 4, "lr": 0.06, "loss": 3.40835, "btime(ms)": 22822, "eta": "12 days, 19:26:35", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 5, "lr": 0.06, "loss": 3.40628, "btime(ms)": 18305, "eta": "10 days, 6:35:44", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 6, "lr": 0.06, "loss": 3.39768, "btime(ms)": 15295, "eta": "8 days, 14:02:02", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 8, "lr": 0.06, "loss": 3.40445, "btime(ms)": 11984, "eta": "6 days, 17:25:29", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 10, "lr": 0.06, "loss": 3.384, "btime(ms)": 9635, "eta": "5 days, 9:47:04", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 12, "lr": 0.06, "loss": 3.39189, "btime(ms)": 8365, "eta": "4 days, 16:40:20", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 14, "lr": 0.06, "loss": 3.37695, "btime(ms)": 7205, "eta": "4 days, 1:02:27", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 15, "lr": 0.06, "loss": 3.38418, "btime(ms)": 6740, "eta": "3 days, 18:47:05", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 16, "lr": 0.06, "loss": 3.37615, "btime(ms)": 6557, "eta": "3 days, 16:19:13", "peak_mem(M)": 10129}
+{"Rank": 0, "ep": 0, "iter": 18, "lr": 0.06, "loss": 3.36704, "btime(ms)": 5856, "eta": "3 days, 6:51:57", "peak_mem(M)": 10129}
